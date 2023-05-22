@@ -29,21 +29,12 @@ export class FilesController {
   }
 
   @Post('varios')
-  @UseInterceptors(
-    FileFieldsInterceptor(
-      [{ name: 'arquivo_um' }, { name: 'arquivo_dois' }],
-      multerConfig,
-    ),
-  )
-  uploadVariosArquivo(
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'arquivos' }], multerConfig))
+  async uploadVariosArquivos(
     @UploadedFiles()
-    files: {
-      arquivo_um?: Express.Multer.File;
-      arquivo_dois?: Express.Multer.File;
-    },
+    files: Express.Multer.File[],
     @Req() req: Request,
   ) {
-    console.log(files);
-    return this.filesService.salvarVariosDados(files, req);
+    return await this.filesService.salvarVariosDados(files['arquivos'], req);
   }
 }
