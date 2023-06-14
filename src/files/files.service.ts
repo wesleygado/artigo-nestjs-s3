@@ -11,25 +11,23 @@ export class FilesService {
     private fotoRepository: Repository<File>,
   ) {}
 
-  async salvarDados(file: Express.Multer.File, req: Request) {
+  async salvarDados(file: Express.MulterS3.File) {
     const arquivo = new File();
-    arquivo.fileName = file.filename;
+    arquivo.fileName = file.key;
     arquivo.contentLength = file.size;
     arquivo.contentType = file.mimetype;
-    arquivo.url = `${req.protocol}://${req.get('host')}/files/${file.filename}`;
+    arquivo.url = file.location;
 
     return await this.fotoRepository.save(arquivo);
   }
 
-  async salvarVariosDados(files: Express.Multer.File[], req: Request) {
+  async salvarVariosDados(files: Express.MulterS3.File[]) {
     const arrayArquivos = files.map((file) => {
       const arquivo = new File();
-      arquivo.fileName = file.filename;
+      arquivo.fileName = file.key;
       arquivo.contentLength = file.size;
       arquivo.contentType = file.mimetype;
-      arquivo.url = `${req.protocol}://${req.get('host')}/files/${
-        file.filename
-      }`;
+      arquivo.url = file.location;
       return arquivo;
     });
 

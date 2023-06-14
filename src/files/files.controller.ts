@@ -3,7 +3,6 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
-  Req,
   UploadedFiles,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
@@ -12,7 +11,6 @@ import {
   FileInterceptor,
 } from '@nestjs/platform-express';
 import multerConfig from './multer-config';
-import { Request } from 'express';
 
 @Controller('files')
 export class FilesController {
@@ -20,21 +18,17 @@ export class FilesController {
 
   @Post()
   @UseInterceptors(FileInterceptor('arquivo', multerConfig))
-  uploadArquivo(
-    @UploadedFile() file: Express.Multer.File,
-    @Req() req: Request,
-  ) {
+  uploadArquivo(@UploadedFile() file: Express.MulterS3.File) {
     console.log(file);
-    return this.filesService.salvarDados(file, req);
+    return this.filesService.salvarDados(file);
   }
 
   @Post('varios')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'arquivos' }], multerConfig))
   async uploadVariosArquivos(
     @UploadedFiles()
-    files: Express.Multer.File[],
-    @Req() req: Request,
+    files: Express.MulterS3.File[],
   ) {
-    return await this.filesService.salvarVariosDados(files['arquivos'], req);
+    return await this.filesService.salvarVariosDados(files['arquivos']);
   }
 }
